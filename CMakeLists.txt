@@ -17,8 +17,26 @@ link_directories(${LIB_DIR})
 
 if (APPLE)
     set(XW_OPENSSL_DIR "openssl@1.1/1.1.1l" CACHE STRING "OpenSSL version to use for compiling lib.")
-    include_directories(/opt/homebrew/Cellar/${XW_OPENSSL_DIR}/include)
-    link_directories(/opt/homebrew/Cellar/${XW_OPENSSL_DIR}/lib)
+
+    set(XW_OPENSSL_OPT_HOMEBREW_INCLUDE /opt/homebrew/Cellar/${XW_OPENSSL_DIR}/include)
+    if (EXISTS ${XW_OPENSSL_OPT_HOMEBREW_INCLUDE})
+        include_directories(${XW_OPENSSL_OPT_HOMEBREW_INCLUDE})
+    endif()
+
+    set(XW_OPENSSL_OPT_HOMEBREW_LIB /opt/homebrew/Cellar/${XW_OPENSSL_DIR}/lib)
+    if (EXISTS ${XW_OPENSSL_OPT_HOMEBREW_LIB})
+        link_directories(${XW_OPENSSL_OPT_HOMEBREW_LIB})
+    endif()
+
+    set(XW_OPENSSL_USR_LOCAL_INCLUDE /usr/local/Cellar/${XW_OPENSSL_DIR}/include)
+    if (EXISTS ${XW_OPENSSL_USR_LOCAL_INCLUDE})
+        include_directories(${XW_OPENSSL_USR_LOCAL_INCLUDE})
+    endif()
+
+    set(XW_OPENSSL_USR_LOCAL_LIB /usr/local/Cellar/${XW_OPENSSL_DIR}/lib)
+    if (EXISTS ${XW_OPENSSL_USR_LOCAL_LIB})
+        link_directories(${XW_OPENSSL_USR_LOCAL_LIB})
+    endif()
 endif()
 
 option(XW_BUILD_LIB "Build the library." ON)
