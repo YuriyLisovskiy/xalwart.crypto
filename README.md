@@ -26,7 +26,7 @@ To build the library from source CMake 2.8.12 or later is required.
 
 ### Dependencies
 The following libraries are required:
-- [openssl]() 3.0.0 or later:
+- [openssl@1.1/1.1.1l](https://github.com/openssl/openssl) or later:
   ```bash
   # Ubuntu
   sudo apt-get install libssl-dev

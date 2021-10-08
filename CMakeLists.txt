@@ -16,9 +16,9 @@ include_directories(${INCLUDE_DIR})
 link_directories(${LIB_DIR})
 
 if (APPLE)
-    set(XW_USE_SSL_VERSION "3.0.0" CACHE STRING "OpenSSL version to use for compiling lib.")
-    include_directories(/opt/homebrew/Cellar/openssl@3/${XW_USE_SSL_VERSION}/include)
-    link_directories(/opt/homebrew/Cellar/openssl@3/${XW_USE_SSL_VERSION}/lib)
+    set(XW_OPENSSL_DIR "openssl@1.1/1.1.1l" CACHE STRING "OpenSSL version to use for compiling lib.")
+    include_directories(/opt/homebrew/Cellar/${XW_OPENSSL_DIR}/include)
+    link_directories(/opt/homebrew/Cellar/${XW_OPENSSL_DIR}/lib)
 endif()
 
 option(XW_BUILD_LIB "Build the library." ON)
