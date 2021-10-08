@@ -39,6 +39,7 @@ The following libraries are required:
 
 ## Compile from Source
 * `BUILD_SHARED_LIBS` means to build a shared or static library (`ON` by default).
+* `XW_USE_SSL_VERSION` sets version of OpenSSL library (macOS only).
 ```bash
 git clone https://github.com/YuriyLisovskiy/xalwart.crypto.git
 cd xalwart.crypto
