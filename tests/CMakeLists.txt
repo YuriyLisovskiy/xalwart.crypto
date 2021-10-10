@@ -1,3 +1,7 @@
+if (NOT APPLE)
+    set(CMAKE_CXX_FLAGS "-pthread")
+endif()
+
 set(BINARY unittests)
 
 function(add_tests SUB_DIR SUB_NAME)
