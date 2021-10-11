@@ -130,7 +130,7 @@ jobs:
       - name: Install Valgrind
         run: |
           brew tap LouisBrunner/valgrind
-          brew install --HEAD~1 LouisBrunner/valgrind/valgrind
+          brew install --HEAD LouisBrunner/valgrind/valgrind
       - name: Install Google Test Framework
         run: |
           brew install googletest
