@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  *
- * SHA256 adaptation from openssl library.
+ * HMAC with SHA implementation using on OpenSSL.
  */
 
 #pragma once
@@ -20,8 +20,20 @@
 
 __CRYPTO_BEGIN__
 
-// Class for HMAC family of algorithms.
-class HmacSHA
+class HMAC
+{
+public:
+	[[nodiscard]]
+	virtual std::string sign(const std::string& data) const = 0;
+
+	[[nodiscard]]
+	virtual bool verify(const std::string& data, const std::string& signature) const = 0;
+
+	[[nodiscard]]
+	virtual std::string name() const = 0;
+};
+
+class HS : public HMAC
 {
 public:
 	/**
@@ -29,20 +41,20 @@ public:
 	 * \param md Pointer to hash function
 	 * \param alg_name Algorithm short name
 	 */
-	inline HmacSHA(std::string secret_key, const EVP_MD* (*md)(), std::string alg_name) :
+	inline HS(std::string secret_key, const EVP_MD* (*md)(), std::string alg_name) :
 		_secret_key(std::move(secret_key)), _md(md), _alg_name(std::move(alg_name))
 	{
 
 	}
 
 	[[nodiscard]]
-	std::string sign(const std::string& data) const;
+	std::string sign(const std::string& data) const override;
 
 	[[nodiscard]]
-	bool verify(const std::string& data, const std::string& signature) const;
+	bool verify(const std::string& data, const std::string& signature) const override;
 
 	[[nodiscard]]
-	inline std::string name() const
+	inline std::string name() const override
 	{
 		return this->_alg_name;
 	}
@@ -53,29 +65,29 @@ private:
 	const std::string _alg_name;
 };
 
-class HS256 : public HmacSHA
+class HS256 : public HS
 {
 public:
 	explicit HS256(std::string secret_key) :
-		HmacSHA(std::move(secret_key), EVP_sha256, "HS256")
+		HS(std::move(secret_key), EVP_sha256, "HS256")
 	{
 	}
 };
 
-class HS384 : public HmacSHA
+class HS384 : public HS
 {
 public:
 	explicit HS384(std::string secret_key) :
-		HmacSHA(std::move(secret_key), EVP_sha384, "HS384")
+		HS(std::move(secret_key), EVP_sha384, "HS384")
 	{
 	}
 };
 
-class HS512 : public HmacSHA
+class HS512 : public HS
 {
 public:
 	explicit HS512(std::string secret_key) :
-		HmacSHA(std::move(secret_key), EVP_sha512, "HS512")
+		HS(std::move(secret_key), EVP_sha512, "HS512")
 	{
 	}
 };

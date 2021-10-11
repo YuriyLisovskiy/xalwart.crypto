@@ -15,17 +15,17 @@
 
 __CRYPTO_BEGIN__
 
-std::string HmacSHA::sign(const std::string& data) const
+std::string HS::sign(const std::string& data) const
 {
-	std::string res((size_t)EVP_MAX_MD_SIZE, '\0');
-	auto len = (unsigned int)res.size();
-	auto ret_value = HMAC(
+	std::string signature((size_t)EVP_MAX_MD_SIZE, '\0');
+	auto len = (unsigned int)signature.size();
+	auto ret_value = ::HMAC(
 		this->_md(),
 		this->_secret_key.data(),
 		(int)this->_secret_key.size(),
 		(const unsigned char*)(data.data()),
 		(int)data.size(),
-		(unsigned char*)res.data(),
+		(unsigned char*)signature.data(),
 		&len
 	);
 	if (ret_value == nullptr)
@@ -33,11 +33,11 @@ std::string HmacSHA::sign(const std::string& data) const
 		throw RuntimeError("HMAC failed", _ERROR_DETAILS_);
 	}
 
-	res.resize(len);
-	return res;
+	signature.resize(len);
+	return signature;
 }
 
-bool HmacSHA::verify(const std::string& data, const std::string& signature) const
+bool HS::verify(const std::string& data, const std::string& signature) const
 {
 	auto res = this->sign(data);
 	if (res.size() != signature.size())

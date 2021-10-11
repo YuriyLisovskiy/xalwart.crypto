@@ -1,5 +1,5 @@
 /**
- * tests_sha.cpp
+ * tests_hmac.cpp
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  */
