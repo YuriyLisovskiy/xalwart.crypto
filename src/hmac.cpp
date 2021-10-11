@@ -6,16 +6,23 @@
 
 #include "./hmac.h"
 
+// STL libraries.
+#include <iomanip>
+#include <sstream>
+
 // OpenSSL libraries.
 #include <openssl/hmac.h>
 
 // Base libraries.
 #include <xalwart.base/exceptions.h>
 
+// Crypto libraries.
+#include "./utilities.h"
+
 
 __CRYPTO_BEGIN__
 
-std::string HS::sign(const std::string& data) const
+std::string HMAC::sign(const std::string& data) const
 {
 	std::string signature((size_t)EVP_MAX_MD_SIZE, '\0');
 	auto len = (unsigned int)signature.size();
@@ -37,7 +44,20 @@ std::string HS::sign(const std::string& data) const
 	return signature;
 }
 
-bool HS::verify(const std::string& data, const std::string& signature) const
+std::string HMAC::sign_to_hex(const std::string& data) const
+{
+	auto signature = this->sign(data);
+	std::ostringstream ss;
+	ss << std::hex << std::uppercase << std::setfill('0');
+	for (unsigned char c : signature)
+	{
+		ss << std::setw(2) << (int)c;
+	}
+
+	return ss.str();
+}
+
+bool HMAC::verify(const std::string& data, const std::string& signature) const
 {
 	auto res = this->sign(data);
 	if (res.size() != signature.size())
@@ -46,6 +66,14 @@ bool HS::verify(const std::string& data, const std::string& signature) const
 	}
 
 	return res == signature;
+}
+
+std::function<std::string(const std::string&)> HMAC::hash_function() const
+{
+	return [md = this->_md](const std::string& data) -> std::string
+	{
+		return hex_digest(md, data);
+	};
 }
 
 __CRYPTO_END__

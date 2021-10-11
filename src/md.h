@@ -1,9 +1,9 @@
 /**
- * sha.h
+ * md.h
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  *
- * SHA hash functions wrappers from openssl library.
+ * MD hash functions wrappers from openssl library.
  */
 
 #pragma once
@@ -23,9 +23,16 @@
 
 __CRYPTO_BEGIN__
 
-inline std::string sha256(const std::string& data)
+// TESTME: md4
+inline std::string md4(const std::string& data)
 {
-	return hex_digest(EVP_sha256, data);
+	return hex_digest(EVP_md4, data);
+}
+
+// TESTME: md5
+inline std::string md5(const std::string& data)
+{
+	return hex_digest(EVP_md5, data);
 }
 
 __CRYPTO_END__
