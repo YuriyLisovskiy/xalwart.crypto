@@ -129,13 +129,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Valgrind
         run: |
-          cd /tmp
-          git clone https://github.com/LouisBrunner/valgrind-macos.git valgrind-macos
-          cd valgrind-macos/
-          git fetch --tags
-          git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
-          ./configure.ac
-          make && sudo make install
+          brew tap LouisBrunner/valgrind
+          brew install --HEAD~1 LouisBrunner/valgrind/valgrind
       - name: Install Google Test Framework
         run: |
           brew install googletest
