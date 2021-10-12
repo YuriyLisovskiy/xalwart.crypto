@@ -8,7 +8,7 @@
 
 #pragma once
 
-// C++ libraries.
+// STL libraries.
 #include <string>
 
 // OpenSSL libraries.

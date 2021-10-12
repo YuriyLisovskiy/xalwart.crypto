@@ -21,7 +21,6 @@ std::string hex_digest(const EVP_MD* (*md)(), const std::string& data)
 	}
 
 	EVP_MD_CTX* md_ctx = EVP_MD_CTX_create();
-
 	if(!EVP_DigestInit_ex(md_ctx, md(), nullptr))
 	{
 		throw RuntimeError("EVP_DigestInit_ex: failed", _ERROR_DETAILS_);
