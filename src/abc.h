@@ -21,6 +21,8 @@ __CRYPTO_ABC_BEGIN__
 class ISignatureAlgorithm
 {
 public:
+	virtual ~ISignatureAlgorithm() = default;
+
 	[[nodiscard]]
 	virtual std::string sign(const std::string& data) const = 0;
 
