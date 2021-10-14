@@ -3,16 +3,14 @@
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  *
- * HMAC with SHA implementation using on OpenSSL.
+ * HMAC with SHA implementation.
  */
 
 #pragma once
 
 // STL libraries.
 #include <string>
-
-// OpenSSL libraries.
-#include <openssl/evp.h>
+#include <functional>
 
 // Module definitions.
 #include "./_def_.h"
@@ -20,7 +18,6 @@
 // Crypto libraries.
 #include "./abc.h"
 #include "./digest.h"
-#include "./sha.h"
 
 
 __CRYPTO_BEGIN__
@@ -43,7 +40,7 @@ public:
 	[[nodiscard]]
 	bool verify(const std::string& data, const std::string& signature) const override;
 
-	inline void update_secret_key(const std::string& new_key) override
+	inline void set_secret_key(const std::string& new_key) override
 	{
 		this->_secret_key = new_key;
 	}
@@ -54,13 +51,13 @@ public:
 	}
 
 	[[nodiscard]]
-	inline std::string name() const override
+	inline std::string get_name() const override
 	{
 		return this->_alg_name;
 	}
 
 	[[nodiscard]]
-	inline std::function<std::string(const std::string&)> hash_function() const override
+	inline std::function<std::string(const std::string&)> get_digest_function() const override
 	{
 		return this->_digest;
 	}

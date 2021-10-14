@@ -8,7 +8,7 @@
 
 #include <xalwart.base/exceptions.h>
 
-#include "../src/base64.h"
+#include "../src/base64url.h"
 #include "../src/jwt.h"
 #include "../src/hmac.h"
 

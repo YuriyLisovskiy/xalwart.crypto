@@ -11,13 +11,11 @@
 #include <sstream>
 
 // OpenSSL libraries.
+#include <openssl/evp.h>
 #include <openssl/hmac.h>
 
 // Base libraries.
 #include <xalwart.base/exceptions.h>
-
-// Crypto libraries.
-#include "./digest.h"
 
 
 __CRYPTO_BEGIN__
@@ -27,7 +25,7 @@ std::string HMAC::sign(const std::string& data) const
 	std::string signature((size_t)EVP_MAX_MD_SIZE, '\0');
 	auto len = (unsigned int)signature.size();
 	auto ret_value = ::HMAC(
-		this->_digest.md_builder(),
+		this->_digest.evp_md(),
 		this->_secret_key.data(),
 		(int)this->_secret_key.size(),
 		(const unsigned char*)(data.data()),

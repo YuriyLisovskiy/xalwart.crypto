@@ -1,5 +1,5 @@
 /**
- * base64.h
+ * base64url.h
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  *

@@ -1,12 +1,12 @@
 /**
- * tests_base64.cpp
+ * tests_base64url.cpp
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  */
 
 #include <gtest/gtest.h>
 
-#include "../src/base64.h"
+#include "../src/base64url.h"
 
 using namespace xw;
 

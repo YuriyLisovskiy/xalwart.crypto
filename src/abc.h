@@ -32,15 +32,15 @@ public:
 	[[nodiscard]]
 	virtual bool verify(const std::string& data, const std::string& signature) const = 0;
 
-	virtual void update_secret_key(const std::string& new_key) = 0;
+	virtual void set_secret_key(const std::string& new_key) = 0;
 
 	virtual void reset_secret_key() = 0;
 
 	[[nodiscard]]
-	virtual std::string name() const = 0;
+	virtual std::string get_name() const = 0;
 
 	[[nodiscard]]
-	virtual std::function<std::string(const std::string&)> hash_function() const = 0;
+	virtual std::function<std::string(const std::string&)> get_digest_function() const = 0;
 };
 
 __CRYPTO_ABC_END__

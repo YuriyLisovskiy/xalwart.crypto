@@ -11,7 +11,7 @@
 #include <xalwart.base/exceptions.h>
 
 // Crypto libraries.
-#include "./base64.h"
+#include "./base64url.h"
 
 
 __CRYPTO_BEGIN__
@@ -25,7 +25,7 @@ std::string jwt_encode(const abc::ISignatureAlgorithm* algorithm, const nlohmann
 	}
 
 	nlohmann::json header = {
-		{"alg", algorithm->name()},
+		{"alg", algorithm->get_name()},
 		{"typ", "JWT"}
 	};
 	std::string unsigned_token = base64url_encode(header.dump()) + "."
@@ -70,7 +70,7 @@ bool jwt_verify(const std::string& token, const abc::ISignatureAlgorithm* algori
 	}
 
 	auto alg = header["alg"].get<std::string>();
-	if (alg != algorithm->name())
+	if (alg != algorithm->get_name())
 	{
 		throw ArgumentError("Got incorrect signature algorithm", _ERROR_DETAILS_);
 	}

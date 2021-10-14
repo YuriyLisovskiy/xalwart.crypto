@@ -48,4 +48,20 @@ std::string _hex_digest(const EVP_MD* md, const std::string& data)
 	return ss.str();
 }
 
+Digest new_digest(const std::string& name)
+{
+	return Digest{[name]() -> const EVP_MD*
+	{
+		auto* md = EVP_get_digestbyname(name.c_str());
+		if (!md)
+		{
+			throw NullPointerException(
+				"EVP_get_digestbyname: digest not found not found", _ERROR_DETAILS_
+			);
+		}
+
+		return md;
+	}};
+}
+
 __CRYPTO_END__
