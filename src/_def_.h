@@ -19,6 +19,10 @@
 #define __CRYPTO_ABC_BEGIN__ __CRYPTO_BEGIN__ namespace abc {
 #define __CRYPTO_ABC_END__ } __CRYPTO_END__
 
+// xw::crypto::jwt
+#define __CRYPTO_JWT_BEGIN__ __CRYPTO_BEGIN__ namespace jwt {
+#define __CRYPTO_JWT_END__ } __CRYPTO_END__
+
 
 __CRYPTO_BEGIN__
 

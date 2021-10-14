@@ -14,9 +14,9 @@
 #include "./base64url.h"
 
 
-__CRYPTO_BEGIN__
+__CRYPTO_JWT_BEGIN__
 
-std::string jwt_encode(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& payload)
+std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& payload)
 {
 	require_non_null(algorithm, "Signature algorithm is nullptr", _ERROR_DETAILS_);
 	if (!payload.is_object())
@@ -34,7 +34,7 @@ std::string jwt_encode(const abc::ISignatureAlgorithm* algorithm, const nlohmann
 	return unsigned_token + "." + base64url_encode(signature);
 }
 
-std::tuple<nlohmann::json, nlohmann::json, std::string> jwt_decode(const std::string& token)
+std::tuple<nlohmann::json, nlohmann::json, std::string> decode(const std::string& token)
 {
 	// header, payload, signature
 	auto parts = str::split(token, '.', 2);
@@ -50,10 +50,38 @@ std::tuple<nlohmann::json, nlohmann::json, std::string> jwt_decode(const std::st
 	};
 }
 
-bool jwt_verify(const std::string& token, const abc::ISignatureAlgorithm* algorithm)
+std::tuple<nlohmann::json, bool> verify(const std::string& token, const abc::ISignatureAlgorithm* algorithm)
 {
 	require_non_null(algorithm, "Signature algorithm is nullptr", _ERROR_DETAILS_);
-	auto [header, payload, signature] = jwt_decode(token);
+	auto [_, payload, signature] = decode(token);
+	auto data = str::rsplit(token, '.', 1);
+	return {payload, algorithm->verify(data[0], signature)};
+}
+
+bool verify_audience(const nlohmann::json& claims, const std::vector<std::string>& target_audience)
+{
+	if (!target_audience.empty() && claims.contains(aud))
+	{
+		auto audience = claims[aud];
+		if (audience.is_array())
+		{
+			for (const auto& target : target_audience)
+			{
+				if (std::find(audience.begin(),  audience.end(), target) == audience.end())
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+void _validate(
+	const nlohmann::json& header, const nlohmann::json& payload, const abc::ISignatureAlgorithm* algorithm
+)
+{
 	if (!header.contains("typ"))
 	{
 		throw ParseError("Invalid JWT header: missing typ", _ERROR_DETAILS_);
@@ -69,8 +97,7 @@ bool jwt_verify(const std::string& token, const abc::ISignatureAlgorithm* algori
 		throw ParseError("Invalid JWT header: missing alg", _ERROR_DETAILS_);
 	}
 
-	auto alg = header["alg"].get<std::string>();
-	if (alg != algorithm->get_name())
+	if (header["alg"].get<std::string>() != algorithm->get_name())
 	{
 		throw ArgumentError("Got incorrect signature algorithm", _ERROR_DETAILS_);
 	}
@@ -79,9 +106,6 @@ bool jwt_verify(const std::string& token, const abc::ISignatureAlgorithm* algori
 	{
 		throw ParseError("JWT payload is not JSON object", _ERROR_DETAILS_);
 	}
-
-	auto data_to_verify = str::rsplit(token, '.', 1);
-	return algorithm->verify(data_to_verify[0], signature);
 }
 
-__CRYPTO_END__
+__CRYPTO_JWT_END__
