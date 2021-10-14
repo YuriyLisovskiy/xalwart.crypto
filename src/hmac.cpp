@@ -17,7 +17,7 @@
 #include <xalwart.base/exceptions.h>
 
 // Crypto libraries.
-#include "./utilities.h"
+#include "./digest.h"
 
 
 __CRYPTO_BEGIN__
@@ -27,7 +27,7 @@ std::string HMAC::sign(const std::string& data) const
 	std::string signature((size_t)EVP_MAX_MD_SIZE, '\0');
 	auto len = (unsigned int)signature.size();
 	auto ret_value = ::HMAC(
-		this->_md(),
+		this->_digest.md_builder(),
 		this->_secret_key.data(),
 		(int)this->_secret_key.size(),
 		(const unsigned char*)(data.data()),
@@ -66,14 +66,6 @@ bool HMAC::verify(const std::string& data, const std::string& signature) const
 	}
 
 	return res == signature;
-}
-
-std::function<std::string(const std::string&)> HMAC::hash_function() const
-{
-	return [md = this->_md](const std::string& data) -> std::string
-	{
-		return hex_digest(md, data);
-	};
 }
 
 __CRYPTO_END__

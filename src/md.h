@@ -8,9 +8,6 @@
 
 #pragma once
 
-// STL libraries.
-#include <string>
-
 // OpenSSL libraries.
 #include <openssl/evp.h>
 
@@ -18,14 +15,11 @@
 #include "./_def_.h"
 
 // Crypto libraries.
-#include "./utilities.h"
+#include "./digest.h"
 
 
 __CRYPTO_BEGIN__
 
-inline std::string md5(const std::string& data)
-{
-	return hex_digest(EVP_md5, data);
-}
+static inline Digest md5 = new_digest(EVP_md5);
 
 __CRYPTO_END__

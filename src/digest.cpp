@@ -1,10 +1,10 @@
 /**
- * utilities.cpp
+ * digest.cpp
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  */
 
-#include "./utilities.h"
+#include "./digest.h"
 
 // STL libraries.
 #include <sstream>
@@ -13,7 +13,7 @@
 
 __CRYPTO_BEGIN__
 
-std::string hex_digest(const EVP_MD* (*md)(), const std::string& data)
+std::string _hex_digest(const EVP_MD* md, const std::string& data)
 {
 	if (!md)
 	{
@@ -21,7 +21,7 @@ std::string hex_digest(const EVP_MD* (*md)(), const std::string& data)
 	}
 
 	EVP_MD_CTX* md_ctx = EVP_MD_CTX_create();
-	if(!EVP_DigestInit_ex(md_ctx, md(), nullptr))
+	if(!EVP_DigestInit_ex(md_ctx, md, nullptr))
 	{
 		throw RuntimeError("EVP_DigestInit_ex: failed", _ERROR_DETAILS_);
 	}
