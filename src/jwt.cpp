@@ -16,10 +16,10 @@
 
 __CRYPTO_JWT_BEGIN__
 
-std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& payload)
+std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& claims)
 {
 	require_non_null(algorithm, "Signature algorithm is nullptr", _ERROR_DETAILS_);
-	if (!payload.is_object())
+	if (!claims.is_object())
 	{
 		throw ArgumentError("JWT payload should be JSON object", _ERROR_DETAILS_);
 	}
@@ -29,33 +29,45 @@ std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json
 		{"typ", "JWT"}
 	};
 	std::string unsigned_token = base64url_encode(header.dump()) + "."
-		+ base64url_encode(payload.dump());
+		+ base64url_encode(claims.dump());
 	std::string signature = algorithm->sign(unsigned_token);
 	return unsigned_token + "." + base64url_encode(signature);
 }
 
-std::tuple<nlohmann::json, nlohmann::json, std::string> decode(const std::string& token)
+std::tuple<std::string, std::string, std::string> split(const std::string& token)
 {
 	// header, payload, signature
 	auto parts = str::split(token, '.', 2);
 	if (parts.size() != 3)
 	{
-		throw ArgumentError("Invalid JWT structure", _ERROR_DETAILS_);
+		throw ArgumentError("Invalid JWT", _ERROR_DETAILS_);
 	}
 
+	return {parts[0], parts[1], parts[2]};
+}
+
+std::tuple<nlohmann::json, nlohmann::json, std::string> decode(const std::string& token)
+{
+	auto [header, payload, signature] = split(token);
 	return {
-		nlohmann::json::parse(base64url_decode(parts[0])),
-		nlohmann::json::parse(base64url_decode(parts[1])),
-		base64url_decode(parts[2])
+		nlohmann::json::parse(base64url_decode(header)),
+		nlohmann::json::parse(base64url_decode(payload)),
+		base64url_decode(signature)
 	};
 }
 
-std::tuple<nlohmann::json, bool> verify(const std::string& token, const abc::ISignatureAlgorithm* algorithm)
+bool verify_signature(
+	const abc::ISignatureAlgorithm* algorithm, const std::string& token, std::string signature
+)
 {
 	require_non_null(algorithm, "Signature algorithm is nullptr", _ERROR_DETAILS_);
-	auto [_, payload, signature] = decode(token);
-	auto data = str::rsplit(token, '.', 1);
-	return {payload, algorithm->verify(data[0], signature)};
+	auto data = split(token);
+	if (signature.empty())
+	{
+		signature = base64url_decode(std::get<2>(data));
+	}
+
+	return algorithm->verify(std::get<0>(data) + "." + std::get<1>(data), signature);
 }
 
 bool verify_audience(const nlohmann::json& claims, const std::vector<std::string>& target_audience)

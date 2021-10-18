@@ -92,20 +92,19 @@ TEST(TestCase_JWT, decode_NoThrowsOnMoreThanThreeParts)
 	));
 }
 
-TEST(TestCase_JWT, verify_Success)
+TEST(TestCase_JWT, verify_signature_Success)
 {
 	std::string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.C5wrwhof-GoYas-LMHo65zF-UW_junfDuNXT_Hu1LcU";
 	auto signer = crypto::HS256("my-256-bit-secret");
 
-	auto [_, success] = crypto::jwt::verify(token, &signer);
-	ASSERT_TRUE(success);
+	ASSERT_TRUE(crypto::jwt::verify_signature(&signer, token));
 }
 
-TEST(TestCase_JWT, verify_ThrowsSignatureAlgorithmIsNullptr)
+TEST(TestCase_JWT, verify_signature_ThrowsSignatureAlgorithmIsNullptr)
 {
 	std::string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.C5wrwhof-GoYas-LMHo65zF-UW_junfDuNXT_Hu1LcU";
 
-	ASSERT_THROW(crypto::jwt::verify(token, nullptr), NullPointerException);
+	ASSERT_THROW(crypto::jwt::verify_signature(nullptr, token), NullPointerException);
 }
 
 //TEST(TestCase_JWT, jwt_verify_ThrowsMissingTyp)
@@ -148,29 +147,26 @@ TEST(TestCase_JWT, verify_ThrowsSignatureAlgorithmIsNullptr)
 //	ASSERT_THROW(crypto::jwt_verify(token, &signer), ParseError);
 //}
 
-TEST(TestCase_JWT, verify_VerificationFailedDueToIncorrectSecretKey)
+TEST(TestCase_JWT, verify_signature_VerificationFailedDueToIncorrectSecretKey)
 {
 	std::string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.C5wrwhof-GoYas-LMHo65zF-UW_junfDuNXT_Hu1LcU";
 	auto signer = crypto::HS256("not-my-256-bit-secret");
 
-	auto [_, success] = crypto::jwt::verify(token, &signer);
-	ASSERT_FALSE(success);
+	ASSERT_FALSE(crypto::jwt::verify_signature(&signer, token));
 }
 
-TEST(TestCase_JWT, verify_VerificationFailedDueToNotOriginalPayload)
+TEST(TestCase_JWT, verify_signature_VerificationFailedDueToNotOriginalPayload)
 {
 	std::string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyfQ.C5wrwhof-GoYas-LMHo65zF-UW_junfDuNXT_Hu1LcU";
 	auto signer = crypto::HS256("my-256-bit-secret");
 
-	auto [_, success] = crypto::jwt::verify(token, &signer);
-	ASSERT_FALSE(success);
+	ASSERT_FALSE(crypto::jwt::verify_signature(&signer, token));
 }
 
-TEST(TestCase_JWT, verify_VerificationFailedDueToNotOriginalHeader)
+TEST(TestCase_JWT, verify_signature_VerificationFailedDueToNotOriginalHeader)
 {
 	std::string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.C5wrwhof-GoYas-LMHo65zF-UW_junfDuNXT_Hu1LcU";
 	auto signer = crypto::HS384("my-256-bit-secret");
 
-	auto [_, success] = crypto::jwt::verify(token, &signer);
-	ASSERT_FALSE(success);
+	ASSERT_FALSE(crypto::jwt::verify_signature(&signer, token));
 }

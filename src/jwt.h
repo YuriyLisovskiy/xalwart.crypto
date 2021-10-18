@@ -48,17 +48,22 @@ constexpr const char* iat = "iat";
 constexpr const char* jti = "jti";
 
 // TODO: docs for 'sign'
-extern std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& payload);
+extern std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& claims);
+
+// TESTME: split
+// TODO: docs for 'split'
+// Returns base64url encoded parts: [header, payload, signature]
+// Throws ArgumentError on invalid JWT.
+extern std::tuple<std::string, std::string, std::string> split(const std::string& token);
 
 // TODO: docs for 'decode'
-// Returns [header, payload, signature]
+// Returns [header, claims, signature]
 extern std::tuple<nlohmann::json, nlohmann::json, std::string> decode(const std::string& token);
 
-// TESTME: verify
-// TODO: docs for 'verify'
-// Returns [payload, is_verified]
-extern std::tuple<nlohmann::json, bool> verify(
-	const std::string& token, const abc::ISignatureAlgorithm* algorithm
+// TESTME: verify_signature
+// TODO: docs for 'verify_signature'
+extern bool verify_signature(
+	const abc::ISignatureAlgorithm* algorithm, const std::string& token, std::string signature=""
 );
 
 // TESTME: verify_audience
