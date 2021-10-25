@@ -20,7 +20,7 @@
 #include "./_def_.h"
 
 // Crypto libraries.
-#include "./abc.h"
+#include "./interfaces.h"
 
 
 __CRYPTO_JWT_BEGIN__
@@ -48,7 +48,7 @@ constexpr const char* iat = "iat";
 constexpr const char* jti = "jti";
 
 // TODO: docs for 'sign'
-extern std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& claims);
+extern std::string sign(const ISignatureAlgorithm* algorithm, const nlohmann::json& claims);
 
 // TESTME: split
 // TODO: docs for 'split'
@@ -63,7 +63,7 @@ extern std::tuple<nlohmann::json, nlohmann::json, std::string> decode(const std:
 // TESTME: verify_signature
 // TODO: docs for 'verify_signature'
 extern bool verify_signature(
-	const abc::ISignatureAlgorithm* algorithm, const std::string& token, std::string signature=""
+	const ISignatureAlgorithm* algorithm, const std::string& token, std::string signature=""
 );
 
 // TESTME: verify_audience
@@ -73,7 +73,7 @@ extern bool verify_audience(const nlohmann::json& claims, const std::vector<std:
 // TESTME: _validate
 // TODO: docs for '_validate'
 void _validate(
-	const nlohmann::json& header, const nlohmann::json& payload, const abc::ISignatureAlgorithm* algorithm
+	const nlohmann::json& header, const nlohmann::json& payload, const ISignatureAlgorithm* algorithm
 );
 
 __CRYPTO_JWT_END__

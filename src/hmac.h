@@ -16,13 +16,13 @@
 #include "./_def_.h"
 
 // Crypto libraries.
-#include "./abc.h"
+#include "./interfaces.h"
 #include "./digest.h"
 
 
 __CRYPTO_BEGIN__
 
-class HMAC : public abc::ISignatureAlgorithm
+class HMAC : public ISignatureAlgorithm
 {
 public:
 	inline HMAC(std::string secret_key, Digest digest, std::string alg_name) :

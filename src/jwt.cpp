@@ -16,7 +16,7 @@
 
 __CRYPTO_JWT_BEGIN__
 
-std::string sign(const abc::ISignatureAlgorithm* algorithm, const nlohmann::json& claims)
+std::string sign(const ISignatureAlgorithm* algorithm, const nlohmann::json& claims)
 {
 	require_non_null(algorithm, "Signature algorithm is nullptr", _ERROR_DETAILS_);
 	if (!claims.is_object())
@@ -57,7 +57,7 @@ std::tuple<nlohmann::json, nlohmann::json, std::string> decode(const std::string
 }
 
 bool verify_signature(
-	const abc::ISignatureAlgorithm* algorithm, const std::string& token, std::string signature
+	const ISignatureAlgorithm* algorithm, const std::string& token, std::string signature
 )
 {
 	require_non_null(algorithm, "Signature algorithm is nullptr", _ERROR_DETAILS_);
@@ -91,7 +91,7 @@ bool verify_audience(const nlohmann::json& claims, const std::vector<std::string
 }
 
 void _validate(
-	const nlohmann::json& header, const nlohmann::json& payload, const abc::ISignatureAlgorithm* algorithm
+	const nlohmann::json& header, const nlohmann::json& payload, const ISignatureAlgorithm* algorithm
 )
 {
 	if (!header.contains("typ"))
