@@ -11,6 +11,7 @@
 // STL libraries.
 #include <string>
 #include <functional>
+#include <memory>
 
 // Module definitions.
 #include "./_def_.h"
@@ -113,5 +114,11 @@ public:
 	{
 	}
 };
+
+// TESTME: get_hs_signer
+// TODO: docs for 'get_hs_signer'
+extern std::shared_ptr<ISignatureAlgorithm> get_hs_signer(
+	const std::string& name, const std::string& secret_key
+);
 
 __CRYPTO_END__
