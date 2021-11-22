@@ -1,9 +1,9 @@
 /**
- * abc.h
+ * interfaces.h
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  *
- * Abstract base classes for crypto library.
+ * Interfaces for crypto library.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 #include "./_def_.h"
 
 
-__CRYPTO_ABC_BEGIN__
+__CRYPTO_BEGIN__
 
 class ISignatureAlgorithm
 {
@@ -43,4 +43,4 @@ public:
 	virtual std::function<std::string(const std::string&)> get_digest_function() const = 0;
 };
 
-__CRYPTO_ABC_END__
+__CRYPTO_END__

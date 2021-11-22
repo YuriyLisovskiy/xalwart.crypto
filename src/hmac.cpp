@@ -16,6 +16,7 @@
 
 // Base libraries.
 #include <xalwart.base/exceptions.h>
+#include <xalwart.base/string_utils.h>
 
 
 __CRYPTO_BEGIN__
@@ -64,6 +65,40 @@ bool HMAC::verify(const std::string& data, const std::string& signature) const
 	}
 
 	return res == signature;
+}
+
+std::shared_ptr<ISignatureAlgorithm> get_hs_signer(
+	const std::string& name, const std::string& secret_key
+)
+{
+	std::shared_ptr<ISignatureAlgorithm> algorithm = nullptr;
+	auto upper_name = str::to_upper(name);
+	if (upper_name == "HS1")
+	{
+		algorithm = std::make_shared<HS1>(secret_key);
+	}
+	else if (upper_name == "HS224")
+	{
+		algorithm = std::make_shared<HS224>(secret_key);
+	}
+	else if (upper_name == "HS256")
+	{
+		algorithm = std::make_shared<HS256>(secret_key);
+	}
+	else if (upper_name == "HS384")
+	{
+		algorithm = std::make_shared<HS384>(secret_key);
+	}
+	else if (upper_name == "HS512")
+	{
+		algorithm = std::make_shared<HS512>(secret_key);
+	}
+	else
+	{
+		throw ArgumentError("HMAC-SHA algorithm not found: " + name, _ERROR_DETAILS_);
+	}
+
+	return algorithm;
 }
 
 __CRYPTO_END__

@@ -11,18 +11,19 @@
 // STL libraries.
 #include <string>
 #include <functional>
+#include <memory>
 
 // Module definitions.
 #include "./_def_.h"
 
 // Crypto libraries.
-#include "./abc.h"
+#include "./interfaces.h"
 #include "./digest.h"
 
 
 __CRYPTO_BEGIN__
 
-class HMAC : public abc::ISignatureAlgorithm
+class HMAC : public ISignatureAlgorithm
 {
 public:
 	inline HMAC(std::string secret_key, Digest digest, std::string alg_name) :
@@ -113,5 +114,11 @@ public:
 	{
 	}
 };
+
+// TESTME: get_hs_signer
+// TODO: docs for 'get_hs_signer'
+extern std::shared_ptr<ISignatureAlgorithm> get_hs_signer(
+	const std::string& name, const std::string& secret_key
+);
 
 __CRYPTO_END__
