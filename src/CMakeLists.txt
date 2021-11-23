@@ -15,20 +15,24 @@ option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." ON)
 add_library(${LIBRARY_NAME} ${SOURCES})
 
 # Link openssl.
-target_link_libraries(${LIBRARY_NAME} PUBLIC crypto ssl)
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${OPENSSL_LIBRARIES})
 
 # Link dependencies.
-target_link_libraries(${LIBRARY_NAME} PUBLIC ${FRAMEWORK_NAME}.base)
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${XALWART_BASE})
+
+set(LIBRARY_ROOT /usr/local CACHE STRING "Installation root directory.")
+set(LIBRARY_INCLUDE_DIR ${LIBRARY_ROOT}/include CACHE STRING "Include installation directory.")
+set(LIBRARY_LINK_DIR ${LIBRARY_ROOT}/lib CACHE STRING "Library installation directory.")
 
 # Install the library.
 install(
     TARGETS ${LIBRARY_NAME}
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
+    ARCHIVE DESTINATION ${LIBRARY_LINK_DIR}
+    LIBRARY DESTINATION ${LIBRARY_LINK_DIR}
 )
 install(
     DIRECTORY "${LIB_SRC_DIR}/"
-    DESTINATION ${INCLUDE_DIR}/${LIBRARY_NAME}
+    DESTINATION ${LIBRARY_INCLUDE_DIR}/${LIBRARY_NAME}
     FILES_MATCHING
     PATTERN "*.h"
 )

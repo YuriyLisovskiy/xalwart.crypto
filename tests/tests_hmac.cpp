@@ -1,5 +1,5 @@
 /**
- * tests_sha.cpp
+ * tests_hmac.cpp
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  */
@@ -10,6 +10,68 @@
 
 using namespace xw;
 
+
+TEST(TestCase_HS1, success)
+{
+	std::string data = "hello, world";
+	std::string secret = "secret";
+	crypto::HS1 hs1(secret);
+	auto signature = hs1.sign(data);
+
+	ASSERT_TRUE(hs1.verify(data, signature));
+}
+
+TEST(TestCase_HS1, fail_InvalidData)
+{
+	std::string data = "hello, world";
+	std::string secret = "secret";
+	crypto::HS1 hs1(secret);
+	auto signature = hs1.sign(data);
+
+	ASSERT_FALSE(hs1.verify(data + "some additional data", signature));
+}
+
+TEST(TestCase_HS1, fail_InvalidKey)
+{
+	std::string data = "hello, world";
+	std::string secret = "secret";
+	auto signature = crypto::HS1(secret).sign(data);
+
+	ASSERT_FALSE(
+		crypto::HS1("another key").verify(data + "some additional data", signature)
+	);
+}
+
+TEST(TestCase_HS224, success)
+{
+	std::string data = "hello, world";
+	std::string secret = "secret";
+	crypto::HS224 hs224(secret);
+	auto signature = hs224.sign(data);
+
+	ASSERT_TRUE(hs224.verify(data, signature));
+}
+
+TEST(TestCase_HS224, fail_InvalidData)
+{
+	std::string data = "hello, world";
+	std::string secret = "secret";
+	crypto::HS224 hs224(secret);
+	auto signature = hs224.sign(data);
+
+	ASSERT_FALSE(hs224.verify(data + "some additional data", signature));
+}
+
+TEST(TestCase_HS224, fail_InvalidKey)
+{
+	std::string data = "hello, world";
+	std::string secret = "secret";
+	auto signature = crypto::HS224(secret).sign(data);
+
+	ASSERT_FALSE(
+		crypto::HS224("another key").verify(data + "some additional data", signature)
+	);
+}
 
 TEST(TestCase_HS256, success)
 {

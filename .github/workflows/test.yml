@@ -1,14 +1,13 @@
-name: "ci"
+name: Test
 on:
   pull_request:
   push:
     branches:
-      - master
       - dev
-      - release
+      - master
 jobs:
   linux-build:
-    name: Build the library for Linux and upload it to artifacts
+    name: '[Linux] Build the library'
     runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
@@ -22,30 +21,31 @@ jobs:
         compiler_version: [ 10 ]
     steps:
       - uses: actions/checkout@v2
-      - name: Download Base Library
+      - name: Download Base library
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
-          workflow: ci.yml
+          workflow: test.yml
           branch: dev
           name: xalwart.base-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           path: xalwart.base-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           repo: YuriyLisovskiy/xalwart.base
-      - name: Build the Library
+      - name: Build Crypto library
         run: |
           sudo docker run -i \
                           -v ${{ github.workspace }}:/app \
                           xalwart/${{ matrix.compiler }}:${{ matrix.compiler_version }}-${{ matrix.os.name }}-${{ matrix.os.version }} \
                           bash /app/scripts/linux/build.sh ${{ matrix.os.name }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}
-      - name: Upload the Artifact
+      - name: Upload the artifact
         uses: actions/upload-artifact@v2
         with:
           name: xalwart.crypto-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           path: xalwart.crypto-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           retention-days: 90
   linux-test:
-    name: "Testing for ${{ matrix.os.name }}-${{ matrix.os.version }} [${{ matrix.compiler }}-${{ matrix.compiler_version }}]"
+    name: '[Linux] Testing [${{ matrix.os.name }}-${{ matrix.os.version }}] [${{ matrix.compiler }}-${{ matrix.compiler_version }}]'
     needs: [ linux-build ]
+    if: github.ref != 'refs/heads/master'
     runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
@@ -61,28 +61,28 @@ jobs:
         compiler_version: [ 10 ]
     steps:
       - uses: actions/checkout@v2
-      - name: Download Base Library
+      - name: Download Base library
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
-          workflow: ci.yml
+          workflow: test.yml
           branch: dev
           name: xalwart.base-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           path: xalwart.base-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           repo: YuriyLisovskiy/xalwart.base
-      - name: Download the Artifact
+      - name: Download the artifact
         uses: actions/download-artifact@v2
         with:
           name: xalwart.crypto-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           path: xalwart.crypto-${{ matrix.os.name }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
-      - name: Build and Run Tests
+      - name: Build and run tests
         run: |
           sudo docker run -i \
                           -v ${{ github.workspace }}:/app \
                           xalwart/gtest:1.11.0-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ matrix.os.name }}-${{ matrix.os.version }} \
                           bash /app/scripts/linux/test.sh ${{ matrix.os.name }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}
   macos-build:
-    name: Build the library for macOS and upload it to artifacts
+    name: '[macOS] Build the library'
     runs-on: ${{ matrix.os_name }}-${{ matrix.os_version }}
     strategy:
       fail-fast: false
@@ -91,34 +91,35 @@ jobs:
         os_version: [ 11 ]
     steps:
       - uses: actions/checkout@v2
-      - name: Download Base Library
+      - name: Download Base library
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
-          workflow: ci.yml
+          workflow: test.yml
           branch: dev
           name: xalwart.base-${{ matrix.os_name }}-${{ matrix.os_version }}
           path: /usr/local
           repo: YuriyLisovskiy/xalwart.base
-      - name: Build the Library
+      - name: Build Crypto library
         run: |
           mkdir build && cd build
-          cmake -D CMAKE_BUILD_TYPE=Release ..
+          cmake -D CMAKE_BUILD_TYPE=Release -D OPENSSL_ROOT_DIR=/usr/local/Cellar/openssl@1.1/1.1.1l_1 ..
           sudo mkdir -p /usr/local/include && sudo mkdir -p /usr/local/lib
           make xalwart.crypto && sudo make install
           cd && mkdir ~/target-build && cd ~/target-build
           mkdir -p include && mkdir -p lib && cd
           sudo cp -r /usr/local/include/xalwart.crypto ~/target-build/include
           sudo cp -r /usr/local/lib/libxalwart.crypto* ~/target-build/lib
-      - name: Upload the Artifact
+      - name: Upload the artifact
         uses: actions/upload-artifact@v2
         with:
           name: xalwart.crypto-${{ matrix.os_name }}-${{ matrix.os_version }}
           path: ~/target-build
           retention-days: 60
   macos-test:
-    name: "Testing for ${{ matrix.os_name }}-${{ matrix.os_version }} [clang]"
+    name: '[macOS] Testing [${{ matrix.os_name }}-${{ matrix.os_version }}] [clang]'
     needs: [ macos-build ]
+    if: github.ref != 'refs/heads/master'
     runs-on: ${{ matrix.os_name }}-${{ matrix.os_version }}
     strategy:
       fail-fast: false
@@ -137,26 +138,27 @@ jobs:
       - name: Create Target Directories
         run: |
           sudo mkdir -p /usr/local
-      - name: Download Base Library
+      - name: Download Base library
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
-          workflow: ci.yml
+          workflow: test.yml
           branch: dev
           name: xalwart.base-${{ matrix.os_name }}-${{ matrix.os_version }}
           path: /usr/local
           repo: YuriyLisovskiy/xalwart.base
-      - name: Download the Artifact
+      - name: Download the artifact
         uses: actions/download-artifact@v2
         with:
           name: xalwart.crypto-${{ matrix.os_name }}-${{ matrix.os_version }}
           path: /usr/local
-      - name: Build and Run Tests
+      - name: Build and run tests
         run: |
           mkdir build && cd build
           cmake -D CMAKE_BUILD_TYPE=Release \
-                -D XW_BUILD_LIB=OFF \
-                -D XW_BUILD_TESTS=ON \
+                -D XW_CONFIGURE_LIB=OFF \
+                -D XW_CONFIGURE_TESTS=ON \
+                -D OPENSSL_ROOT_DIR=/usr/local/Cellar/openssl@1.1/1.1.1l_1 \
                 ..
           make unittests-all
           valgrind --leak-check=full ./tests/unittests-all

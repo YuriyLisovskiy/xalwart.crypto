@@ -3,81 +3,122 @@
  *
  * Copyright (c) 2021 Yuriy Lisovskiy
  *
- * SHA256 adaptation from openssl library.
+ * HMAC with SHA implementation.
  */
 
 #pragma once
 
-// C++ libraries.
+// STL libraries.
 #include <string>
-
-// OpenSSL libraries.
-#include <openssl/evp.h>
+#include <functional>
+#include <memory>
 
 // Module definitions.
 #include "./_def_.h"
 
+// Crypto libraries.
+#include "./interfaces.h"
+#include "./digest.h"
+
 
 __CRYPTO_BEGIN__
 
-// Class for HMAC family of algorithms.
-class HmacSHA
+class HMAC : public ISignatureAlgorithm
 {
 public:
-	/**
-	 * \param secret_key
-	 * \param md Pointer to hash function
-	 * \param alg_name Algorithm short name
-	 */
-	inline HmacSHA(std::string secret_key, const EVP_MD* (*md)(), std::string alg_name) :
-		_secret_key(std::move(secret_key)), _md(md), _alg_name(std::move(alg_name))
+	inline HMAC(std::string secret_key, Digest digest, std::string alg_name) :
+		_secret_key(std::move(secret_key)), _digest(std::move(digest)), _alg_name(std::move(alg_name))
 	{
-
+		this->_original_secret_key = this->_secret_key;
 	}
 
 	[[nodiscard]]
-	std::string sign(const std::string& data) const;
+	std::string sign(const std::string& data) const override;
 
 	[[nodiscard]]
-	bool verify(const std::string& data, const std::string& signature) const;
+	std::string sign_to_hex(const std::string& data) const override;
 
 	[[nodiscard]]
-	inline std::string name() const
+	bool verify(const std::string& data, const std::string& signature) const override;
+
+	inline void set_secret_key(const std::string& new_key) override
+	{
+		this->_secret_key = new_key;
+	}
+
+	inline void reset_secret_key() override
+	{
+		this->_secret_key = this->_original_secret_key;
+	}
+
+	[[nodiscard]]
+	inline std::string get_name() const override
 	{
 		return this->_alg_name;
 	}
 
+	[[nodiscard]]
+	inline std::function<std::string(const std::string&)> get_digest_function() const override
+	{
+		return this->_digest;
+	}
+
 private:
-	const std::string _secret_key;
-	const EVP_MD* (*_md)();
+	std::string _secret_key;
+	std::string _original_secret_key;
+	Digest _digest;
 	const std::string _alg_name;
 };
 
-class HS256 : public HmacSHA
+class HS1 : public HMAC
+{
+public:
+	explicit HS1(std::string secret_key) :
+		HMAC(std::move(secret_key), sha1, "HS1")
+	{
+	}
+};
+
+class HS224 : public HMAC
+{
+public:
+	explicit HS224(std::string secret_key) :
+		HMAC(std::move(secret_key), sha224, "HS224")
+	{
+	}
+};
+
+class HS256 : public HMAC
 {
 public:
 	explicit HS256(std::string secret_key) :
-		HmacSHA(std::move(secret_key), EVP_sha256, "HS256")
+		HMAC(std::move(secret_key), sha256, "HS256")
 	{
 	}
 };
 
-class HS384 : public HmacSHA
+class HS384 : public HMAC
 {
 public:
 	explicit HS384(std::string secret_key) :
-		HmacSHA(std::move(secret_key), EVP_sha384, "HS384")
+		HMAC(std::move(secret_key), sha384, "HS384")
 	{
 	}
 };
 
-class HS512 : public HmacSHA
+class HS512 : public HMAC
 {
 public:
 	explicit HS512(std::string secret_key) :
-		HmacSHA(std::move(secret_key), EVP_sha512, "HS512")
+		HMAC(std::move(secret_key), sha512, "HS512")
 	{
 	}
 };
+
+// TESTME: get_hs_signer
+// TODO: docs for 'get_hs_signer'
+extern std::shared_ptr<ISignatureAlgorithm> get_hs_signer(
+	const std::string& name, const std::string& secret_key
+);
 
 __CRYPTO_END__

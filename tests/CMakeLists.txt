@@ -15,7 +15,7 @@ function(add_tests SUB_DIR SUB_NAME)
     list(FILTER SOURCES EXCLUDE REGEX ".*main.cpp$")
     set(FULL_BIN ${BINARY}-${SUB_NAME})
     add_executable(${FULL_BIN} ${SOURCES} ${TESTS_DIR}/main.cpp)
-    target_link_libraries(${FULL_BIN} PUBLIC gtest crypto ssl)
+    target_link_libraries(${FULL_BIN} PUBLIC gtest ${OPENSSL_LIBRARIES})
     target_link_libraries(${FULL_BIN} PUBLIC ${FRAMEWORK_NAME}.base ${LIBRARY_NAME})
 endfunction()
 

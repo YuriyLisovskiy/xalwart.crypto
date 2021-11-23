@@ -15,6 +15,10 @@
 #define __CRYPTO_BEGIN__ __MAIN_NAMESPACE_BEGIN__ namespace crypto {
 #define __CRYPTO_END__ } __MAIN_NAMESPACE_END__
 
+// xw::crypto::jwt
+#define __CRYPTO_JWT_BEGIN__ __CRYPTO_BEGIN__ namespace jwt {
+#define __CRYPTO_JWT_END__ } __CRYPTO_END__
+
 
 __CRYPTO_BEGIN__
 
