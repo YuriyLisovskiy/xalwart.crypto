@@ -5,12 +5,14 @@
 [![ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
 [![macOS](https://img.shields.io/badge/macOS-343D46?style=flat&logo=apple&logoColor=F0F0F0)](https://www.apple.com/macos)
 
-### Build Status
-| @ | Build |
+| @ | Status |
 |---|---|
-| Dev branch: | [![CI](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/test.yml/badge.svg?branch=dev)](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/test.yml?query=branch%3Adev) |
-| Master branch: | [![CI](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/test.yml?query=branch%3Amaster) |
+| Dev branch: | [![CI](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml/badge.svg?branch=dev)](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml?query=branch%3Adev) |
+| Master branch: | [![CI](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml/badge.svg?branch=master)](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml?query=branch%3Amaster) |
 
+> ATTENTION: this project still has [issues](https://github.com/YuriyLisovskiy/xalwart.crypto/issues),
+> requires testing, documentation, and is not stable.
+> 
 ## Requirements
 The following compilers are tested with the CI system, and are known to work on:
 
