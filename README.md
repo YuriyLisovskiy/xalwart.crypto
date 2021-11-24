@@ -10,9 +10,8 @@
 | Dev branch: | [![CI](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml/badge.svg?branch=dev)](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml?query=branch%3Adev) |
 | Master branch: | [![CI](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml/badge.svg?branch=master)](https://github.com/YuriyLisovskiy/xalwart.crypto/actions/workflows/build_and_test.yml?query=branch%3Amaster) |
 
-> ATTENTION: this project still has [issues](https://github.com/YuriyLisovskiy/xalwart.crypto/issues),
-> requires testing, documentation, and is not stable.
-> 
+> ATTENTION: this project still requires testing, documentation, and is not stable.
+
 ## Requirements
 The following compilers are tested with the CI system, and are known to work on:
 
